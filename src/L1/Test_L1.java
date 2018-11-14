@@ -1,16 +1,54 @@
 package L1;
 
+import java.util.Iterator;
+import java.util.TreeMap;
+
 public class Test_L1 {
 
 	public static void main(String[] args) {
 		Test_L1 a = new Test_L1();
-		a.testL1e1();
+		a.testL1e1();		
 		a.тест();
-		ТестРус тестРус = new ТестРус();
-		int умнож = тестРус.тестМет(тестРус.перем1);
+		a.typeCast();
+		
+		ТестРус тестРус = new ТестРус();		
+		int умнож = тестРус.тестМет(тестРус.перем1);		
 		System.out.println(умнож);
 		тестРус.\u0280\u0950();
-		a.typeCast();
+		
+		TreeMap<Integer,String> tm1 = new TreeMap<Integer,String>();
+		tm1.put(2, "Misha");
+		tm1.put(1, "Senya");
+		
+		String str = "first try";
+		int i = 5000;
+		
+		ImmutableClassExample ice = new ImmutableClassExample(i, str, tm1);
+		
+		System.out.println("Lets see whether its copy by field or reference");
+		System.out.println(str==ice.getName());
+		System.out.println(tm1 == ice.getImmMap());
+		
+		System.out.println("print the ice values");
+		System.out.println("ice id:"+ice.getId());
+		System.out.println("ice name:"+ice.getName());
+		System.out.println("ice immMap:"+ice.getImmMap());
+		
+		System.out.println("Change the local variable values");
+		i=20;
+		str="second try";
+		tm1.put(3, "Katya");
+		
+		System.out.println("print the values again");
+		System.out.println("ice id after local variable change:"+ice.getId());
+		System.out.println("ice name after local variable change:"+ice.getName());
+		System.out.println("ice immMap after local variable change:"+ice.getImmMap());
+				
+		TreeMap<Integer, String> tmTest = ice.getImmMap();
+		tmTest.put(4, "new");
+				
+		System.out.println("ice immMap after changing variable from accessor methods:"+ice.getImmMap());
+		
 	}
 	
 	void testL1e1() {
@@ -61,6 +99,11 @@ public class Test_L1 {
 		c2 = (char) i1;
 		System.out.println(c2);
 	}
+	
+	void typeCh() {
+		double a = .01;
+		
+	}
 
 }
 
@@ -74,4 +117,39 @@ class ТестРус {
 	void \u0280\u0950() {
 		System.out.println("\u0280\u0950");
 	}
+}
+
+final class ImmutableClassExample {
+	
+	private final int id;
+	private final String name;
+	private final TreeMap<Integer,String> immMap;
+	
+	public int getId() {
+		return id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public TreeMap<Integer,String> getImmMap() {
+		return (TreeMap<Integer,String>) immMap.clone();
+	}
+	
+	public ImmutableClassExample(int id, String name, TreeMap<Integer,String> tm) {
+		this.id = id;
+		this.name = name;
+		TreeMap <Integer,String> tempMap = new TreeMap<Integer,String>();
+		int key;
+		Iterator<Integer> it = tm.keySet().iterator();
+		while(it.hasNext()) {
+			key = it.next();
+			tempMap.put(key, tm.get(key));
+		}
+		this.immMap = tempMap;
+	}
+	
+	
 }
